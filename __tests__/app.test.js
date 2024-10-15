@@ -60,3 +60,42 @@ describe('GET /api', () => {
         })
     })
 })
+
+describe.only('GET /api/articles/:article_id', () => {
+    it('returns a 200 status code when valid id given and returns an object with correct properties', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then((res) => {
+            const article = res.body.article[0]
+            expect(Object.keys(article)).toHaveLength(8)
+            
+            expect(article).toHaveProperty('author', expect.any(String));
+            expect(article).toHaveProperty('title', expect.any(String));
+            expect(article).toHaveProperty('article_id', expect.any(Number));
+            expect(article).toHaveProperty('body', expect.any(String));
+            expect(article).toHaveProperty('topic', expect.any(String));
+            expect(article).toHaveProperty('created_at', expect.any(String)); 
+            expect(article).toHaveProperty('votes', expect.any(Number));
+            expect(article).toHaveProperty('article_img_url', expect.any(String)); 
+
+        })
+    })
+    it('returns a 404 status code when non-existent id is given', () => {
+        return request(app)
+        .get('/api/articles/9876')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('Not Found')
+        })
+    })
+
+    it('returns a 404 status code when invalid id is given', () => {
+        return request(app)
+        .get('/api/articles/invalid')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad Request')
+        })
+    })
+})
