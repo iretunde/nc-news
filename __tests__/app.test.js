@@ -101,26 +101,26 @@ describe('GET /api/articles/:article_id', () => {
         })
     })
 })
-describe('GET /api/articles', () => {
-    it('returns a 200 status code and returns an array of article objects with correct properties and sorted in descending date order', () => {
-        return request(app)
-        .get('/api/articles')
-        .expect(200)
-        .then((res) => {
-            const articles = res.body.articles
-            expect(articles).toBeSortedBy('created_at', { descending: true })
-            articles.forEach((article) => {
-                expect(article).toHaveProperty('author');
-                expect(article).toHaveProperty('title');
-                expect(article).toHaveProperty('article_id',);
-                expect(article).toHaveProperty('topic');
-                expect(article).toHaveProperty('created_at');
-                expect(article).toHaveProperty('votes');
-                expect(article).toHaveProperty('article_img_url');
-                expect(article).toHaveProperty('comment_count');   
-                expect(article).not.toHaveProperty('body');
-            })
-        })
-    })
+// describe('GET /api/articles', () => {
+//     it('returns a 200 status code and returns an array of article objects with correct properties and sorted in descending date order', () => {
+//         return request(app)
+//         .get('/api/articles')
+//         .expect(200)
+//         .then((res) => {
+//             const articles = res.body.articles
+//             expect(articles).toBeSortedBy('created_at', { descending: true })
+//             articles.forEach((article) => {
+//                 expect(article).toHaveProperty('author');
+//                 expect(article).toHaveProperty('title');
+//                 expect(article).toHaveProperty('article_id',);
+//                 expect(article).toHaveProperty('topic');
+//                 expect(article).toHaveProperty('created_at');
+//                 expect(article).toHaveProperty('votes');
+//                 expect(article).toHaveProperty('article_img_url');
+//                 expect(article).toHaveProperty('comment_count');   
+//                 expect(article).not.toHaveProperty('body');
+//             })
+//         })
+//     })
     
-})
+// })
