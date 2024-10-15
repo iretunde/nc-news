@@ -1,12 +1,14 @@
 const express = require('express')
 const app = express()
-const {getTopics, getEndpoints, getArticleByID} = require("./controllers/controllers")
+const {getTopics, getEndpoints, getArticleByID, getArticles} = require("./controllers/controllers")
 const { generalErrors } = require('./errors-controllers/errors-controllers')
 
 
 app.get('/api', getEndpoints)
 
 app.get('/api/topics', getTopics)
+
+app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id', getArticleByID)
 
@@ -22,3 +24,4 @@ app.use((err, req, res, next) => {
   });
 
 module.exports = app
+

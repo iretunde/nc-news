@@ -4,6 +4,8 @@ const seed = require('../db/seeds/seed')
 const db = require('../db/connection')
 const testData = require('../db/data/test-data')
 
+
+
 beforeEach(() => seed(testData))
 afterAll(() => db.end())
 
@@ -61,7 +63,7 @@ describe('GET /api', () => {
     })
 })
 
-describe.only('GET /api/articles/:article_id', () => {
+describe('GET /api/articles/:article_id', () => {
     it('returns a 200 status code when valid id given and returns an object with correct properties', () => {
         return request(app)
         .get('/api/articles/1')
@@ -78,7 +80,7 @@ describe.only('GET /api/articles/:article_id', () => {
             expect(article).toHaveProperty('created_at', expect.any(String)); 
             expect(article).toHaveProperty('votes', expect.any(Number));
             expect(article).toHaveProperty('article_img_url', expect.any(String)); 
-
+            
         })
     })
     it('returns a 404 status code when non-existent id is given', () => {
@@ -89,7 +91,7 @@ describe.only('GET /api/articles/:article_id', () => {
             expect(res.body.msg).toBe('Not Found')
         })
     })
-
+    
     it('returns a 404 status code when invalid id is given', () => {
         return request(app)
         .get('/api/articles/invalid')
@@ -99,3 +101,26 @@ describe.only('GET /api/articles/:article_id', () => {
         })
     })
 })
+// describe('GET /api/articles', () => {
+//     it('returns a 200 status code and returns an array of article objects with correct properties and sorted in descending date order', () => {
+//         return request(app)
+//         .get('/api/articles')
+//         .expect(200)
+//         .then((res) => {
+//             const articles = res.body.articles
+//             expect(articles).toBeSortedBy('created_at', { descending: true })
+//             articles.forEach((article) => {
+//                 expect(article).toHaveProperty('author');
+//                 expect(article).toHaveProperty('title');
+//                 expect(article).toHaveProperty('article_id',);
+//                 expect(article).toHaveProperty('topic');
+//                 expect(article).toHaveProperty('created_at');
+//                 expect(article).toHaveProperty('votes');
+//                 expect(article).toHaveProperty('article_img_url');
+//                 expect(article).toHaveProperty('comment_count');   
+//                 expect(article).not.toHaveProperty('body');
+//             })
+//         })
+//     })
+    
+// })
