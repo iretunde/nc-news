@@ -101,26 +101,87 @@ describe('GET /api/articles/:article_id', () => {
         })
     })
 })
-// describe('GET /api/articles', () => {
-//     it('returns a 200 status code and returns an array of article objects with correct properties and sorted in descending date order', () => {
-//         return request(app)
-//         .get('/api/articles')
-//         .expect(200)
-//         .then((res) => {
-//             const articles = res.body.articles
-//             expect(articles).toBeSortedBy('created_at', { descending: true })
-//             articles.forEach((article) => {
-//                 expect(article).toHaveProperty('author');
-//                 expect(article).toHaveProperty('title');
-//                 expect(article).toHaveProperty('article_id',);
-//                 expect(article).toHaveProperty('topic');
-//                 expect(article).toHaveProperty('created_at');
-//                 expect(article).toHaveProperty('votes');
-//                 expect(article).toHaveProperty('article_img_url');
-//                 expect(article).toHaveProperty('comment_count');   
-//                 expect(article).not.toHaveProperty('body');
-//             })
-//         })
-//     })
+describe('GET /api/articles', () => {
+    it('returns a 200 status code and returns an array of article objects with correct properties and sorted in descending date order', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            expect(articles).toBeSortedBy('created_at', { descending: true })
+            articles.forEach((article) => {
+                expect(article).toHaveProperty('author');
+                expect(article).toHaveProperty('title');
+                expect(article).toHaveProperty('article_id',);
+                expect(article).toHaveProperty('topic');
+                expect(article).toHaveProperty('created_at');
+                expect(article).toHaveProperty('votes');
+                expect(article).toHaveProperty('article_img_url');
+                expect(article).toHaveProperty('comment_count');   
+                expect(article).not.toHaveProperty('body');
+            })
+        })
+    })
     
-// })
+})
+
+describe('GET /api/articles/:article_id/comments', () => {
+    it('returns a 200 status code and returns an array of comments with correct properties', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((res) => {
+            const comments = res.body.comments
+            comments.forEach((comment) => {
+                expect(comment).toHaveProperty('comment_id', expect.any(Number));
+                expect(comment).toHaveProperty('votes', expect.any(Number));
+                expect(comment).toHaveProperty('created_at', expect.any(String)); 
+                expect(comment).toHaveProperty('author', expect.any(String));
+                expect(comment).toHaveProperty('body', expect.any(String));
+                expect(comment).toHaveProperty('article_id', expect.any(Number));
+            })
+            
+            
+        })
+    })  
+    it('returns most recent comments first', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((res) => {
+            const comments = res.body.comments
+            expect(comments).toBeSortedBy('created_at', {'descending': true})
+        })
+        
+        
+    })
+    it('returns a 200 status code an empty array when there are no comments for an article', () => {
+        return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then((res) => {
+            console.log(res.body)
+            const comments = res.body.comments
+            expect(comments).toEqual([])
+
+        })
+        
+        
+    })
+    it('returns a 404 status code when non-existent id is given', () => {
+        return request(app)
+        .get('/api/articles/12321/comments')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('Not Found')
+        })
+    })
+    it('returns a 404 status code when invalid id is given', () => {
+        return request(app)
+        .get('/api/articles/invalid/comments')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad Request')
+        })
+    })
+})
