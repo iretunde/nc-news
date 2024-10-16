@@ -1,4 +1,4 @@
-const {selectTopics, selectEndpoints, selectArticleByID, selectArticles, selectCommentsByArticle} = require('../models/models')
+const {selectTopics, selectEndpoints, selectArticleByID, selectArticles, selectCommentsByArticle, insertCommentByArticleId, insertVoteByArticleID} = require('../models/models')
 const fs = require("fs/promises")
 
 
@@ -42,16 +42,57 @@ exports.getArticleByID = (req, res, next) => {
 exports.getCommentsByArticleID = (req, res, next) => {
     const {article_id} = req.params
     const promises = [selectArticleByID(article_id)]
-
+    
     Promise.all(promises).then(() => {
         selectCommentsByArticle(article_id).then((comments) => {
             res.status(200).send({comments})
         })
-
+        
     }).catch((err) => {
         next(err)
     })
-
+    
 }
 
+exports.postCommentsByArticleID = (req, res, next) => {
+    const {article_id} = req.params
+    const promises = [selectArticleByID(article_id)]
+    
+    Promise.all(promises).then(() => {
+        if (!req.body.hasOwnProperty('username') || !req.body.hasOwnProperty('body')){
+            return Promise.reject({status: 400, msg: 'Bad Request'})
+        }
+        
+        const username = req.body.username
+        const body = req.body.body
+        return insertCommentByArticleId(article_id, username, body).then((comment) => {
+            res.status(201).send({comment: comment[0]})
+            
+        })
+    }).catch((err) => {
+        next(err)
+    })
+    
+    
+}
 
+exports.patchVoteByArticleID = (req, res, next) => {
+    const {article_id} = req.params
+    const promises = [selectArticleByID(article_id)]
+    
+    
+    Promise.all(promises).then(() => {
+        if (!req.body.hasOwnProperty('inc_votes')){
+            return Promise.reject({status: 400, msg: 'Bad Request'})
+        }
+        
+        const votes = req.body.inc_votes
+        return insertVoteByArticleID(article_id, votes).then((article) => {
+            res.status(200).send({article: article[0]})
+    
+    })
+    }).catch((err) => {
+        next(err)
+    }) 
+    
+}
