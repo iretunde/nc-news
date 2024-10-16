@@ -55,10 +55,23 @@ exports.selectArticleByID = (id) => {
 }
 
 exports.selectCommentsByArticle = (id) => {
-    if (isNaN(Number(id))) return Promise.reject({status: 400, msg: 'Bad Request'})
     return db.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`, [id]).then(({rows}) => {
         return rows
     })
+
+}
+
+exports.insertCommentByArticleId = (id, username, body) => {
+    return db.query(`INSERT INTO comments (article_id, author, body)
+                    VALUES ($1, $2, $3)
+                    RETURNING * ;`, [id, username, body]).then(({rows}) => {
+                        return rows
+                    })
+                    .catch((err) => {
+                        if (err.code === '23503'){
+                            return Promise.reject({status: 404, msg: 'Invalid username'})
+                        }
+                    })
 
 }
 

@@ -92,7 +92,7 @@ describe('GET /api/articles/:article_id', () => {
         })
     })
     
-    it('returns a 404 status code when invalid id is given', () => {
+    it('returns a 400 status code when invalid id is given', () => {
         return request(app)
         .get('/api/articles/invalid')
         .expect(400)
@@ -163,7 +163,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             console.log(res.body)
             const comments = res.body.comments
             expect(comments).toEqual([])
-
+            
         })
         
         
@@ -176,7 +176,7 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(res.body.msg).toBe('Not Found')
         })
     })
-    it('returns a 404 status code when invalid id is given', () => {
+    it('returns a 400 status code when invalid id is given', () => {
         return request(app)
         .get('/api/articles/invalid/comments')
         .expect(400)
@@ -185,3 +185,72 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     })
 })
+
+
+describe('POST /api/articles/:article_id/comments', () => {
+    it('returns a 201 status code and returns an array of comments with correct properties', () => {
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send({username: "rogersop", body: "I haven't actually read the article but I am commenting anyway."
+        })
+        .expect(201)
+        .then((res) => {            
+            const comment = res.body.comment
+            expect(comment.body).toEqual("I haven't actually read the article but I am commenting anyway.")
+            expect(comment.article_id).toEqual(3)
+        })
+    }) 
+    it('returns a 400 status code when invalid id is given', () => {
+        return request(app)
+        .post('/api/articles/invalid/comments')
+        .send({username: "rogersop", body: "I haven't actually read the article but I am commenting anyway."
+        })
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad Request')
+        })
+    })
+    it('returns a 404 status code when non-existent id is given', () => {
+        return request(app)
+        .post("/api/articles/1234952/comments")
+        .send({username: "rogersop", body: "I haven't actually read the article but I am commenting anyway."
+        })
+        .expect(404)
+        .then((res) => {            
+            expect(res.body.msg).toBe('Not Found')
+        })
+    }) 
+    it('returns a 400 status code when "username" is missing in send body', () => {
+        return request(app)
+        .post('/api/articles/invalid/comments')
+        .send({body: "I haven't actually read the article but I am commenting anyway."
+        })
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad Request')
+        })
+    })
+    it('returns a 400 status code when "body" is missing in send body', () => {
+        return request(app)
+        .post('/api/articles/invalid/comments')
+        .send({username: "rogersop"
+        })
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Bad Request')
+        })
+    })
+    it('returns a correct status code when invalid username passed', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({username: "superspiderman", body: 'This message will not send ideally'
+        })
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('Invalid username')
+        })
+    })
+})
+
+
+
