@@ -1,4 +1,4 @@
-const {selectTopics, selectEndpoints, selectArticleByID, selectArticles} = require('../models/models')
+const {selectTopics, selectEndpoints, selectArticleByID, selectArticles, selectCommentsByArticle} = require('../models/models')
 const fs = require("fs/promises")
 
 
@@ -32,6 +32,21 @@ exports.getArticleByID = (req, res, next) => {
     const {article_id} = req.params
     selectArticleByID(article_id).then((article) => {
         res.status(200).send({article})
+
+    }).catch((err) => {
+        next(err)
+    })
+
+}
+
+exports.getCommentsByArticleID = (req, res, next) => {
+    const {article_id} = req.params
+    const promises = [selectArticleByID(article_id)]
+
+    Promise.all(promises).then(() => {
+        selectCommentsByArticle(article_id).then((comments) => {
+            res.status(200).send({comments})
+        })
 
     }).catch((err) => {
         next(err)
