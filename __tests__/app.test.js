@@ -122,6 +122,14 @@ describe('GET /api/articles', () => {
             })
         })
     })
+    it('returns a 400 status code and error message when an unrecognized query parameter is provided', () => {
+        return request(app)
+        .get('/api/articles?wakapaka=news')  // 'wakapaka' is an invalid query parameter
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Invalid query parameter(s)');
+        });
+    }); 
     
 })
 
@@ -451,3 +459,54 @@ describe('GET /api/articles?sort_by=:sort_value&order=:order_value', () => {
     
     
 })
+
+describe('GET /api/articles?topic=:topic_value', () => {
+    it('returns a 200 status code and returns an array of article objects of a particular topic (mitch)', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            
+            articles.forEach((article) => {
+                 expect(article).toHaveProperty('topic', 'mitch')
+             })
+
+        })
+    })
+    it('returns a 200 status code and returns an array of article objects of a particular topic (cats)', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            
+            articles.forEach((article) => {
+                 expect(article).toHaveProperty('topic', 'cats')
+             })
+
+        })
+    })
+    it('returns a 200 status code and returns an array of article objects of a particular topic (paper)', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            
+            articles.forEach((article) => {
+                 expect(article).toHaveProperty('topic', 'paper')
+             })
+
+        })
+    })
+    it('returns a 400 status code and error message when an invalid topic is provided', () => {
+        return request(app)
+        .get('/api/articles?topic=invalidTopic')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Invalid topic value');
+        });
+    });
+    
+}) 

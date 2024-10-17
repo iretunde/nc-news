@@ -24,7 +24,20 @@ exports.getEndpoints = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
     const {sort_by} = req.query
     const {order} = req.query
-    selectArticles(sort_by, order).then((articles) => {
+    const {topic} = req.query
+
+    const validQueryParams = ['sort_by', 'order', 'topic', 'author'];  // Define valid query parameters
+    const queryKeys = Object.keys(req.query);
+
+    // Check if any invalid query parameters were provided
+    const invalidParams = queryKeys.filter((key) => !validQueryParams.includes(key));
+    if (invalidParams.length > 0) {
+        return res.status(400).send({ msg: 'Invalid query parameter(s)' });
+    }
+
+
+
+    selectArticles(sort_by, order, topic).then((articles) => {
         res.status(200).send({articles})
     }).catch((err) => {
         next(err)
