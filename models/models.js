@@ -23,7 +23,19 @@ exports.selectEndpoints = () => {
 }
 
 
-exports.selectArticles = (req, res, next) => {
+exports.selectArticles = (sort_by = 'created_at', order = 'DESC') => {
+    const new_sort_by = sort_by || 'created_at'
+    const new_order = order || 'DESC'
+    const validSortByColumns = ['created_at', 'votes', 'title', 'author', 'topic', 'article_id']; 
+    const validOrderValues = ['asc', 'desc'];
+
+    if (!validSortByColumns.includes(new_sort_by.toLowerCase())) {
+        return Promise.reject({ status: 400, msg: 'Invalid sort column' });
+    }
+    if (!validOrderValues.includes(new_order.toLowerCase())) {
+        return Promise.reject({ status: 400, msg: 'Invalid order value' });
+    }
+
     return db.query(`SELECT 
                         articles.author,
                         articles.title,
@@ -40,7 +52,7 @@ exports.selectArticles = (req, res, next) => {
                         GROUP BY article_id
                     ) AS comment_counts
                     ON articles.article_id = comment_counts.article_id
-                    ORDER BY articles.created_at DESC`).then(({rows}) => {
+                    ORDER BY articles.${new_sort_by} ${new_order}`).then(({rows}) => {
         return rows
     })
 }
