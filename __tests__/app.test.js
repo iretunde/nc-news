@@ -333,6 +333,7 @@ describe('PATCH /api/articles/:article_id', () => {
         })
         
     })
+
     
 })
 
@@ -353,7 +354,7 @@ describe('DELETE /api/comments/:comment_id', () => {
             expect(res.body).toEqual({ msg: "Bad Request" }); 
         });
     });
-
+    
     it('returns a 404 status code for a comment ID that does not exist', () => {
         return request(app)
         .delete("/api/comments/999")  
@@ -377,9 +378,76 @@ describe('GET /api/users', () => {
                 expect(user).toHaveProperty('name', expect.any(String));      
                 expect(user).toHaveProperty('avatar_url', expect.any(String)); 
             });
-
+            
 
         })
     })
 })
 
+describe('GET /api/articles?sort_by=:sort_value&order=:order_value', () => {
+    it('returns a 200 status code and returns an array of article objects sorted by author in descending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&order=desc')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            expect(articles).toBeSortedBy('author', { descending: true })
+
+        })
+    })
+    it('returns a 200 status code and returns an array of article objects sorted by title in ascending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=title&order=asc')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            expect(articles).toBeSortedBy('title', { descending: false })
+        })
+    })
+    it('returns a 200 status code and returns an array of article objects sorted by topic in ascending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=topic&order=asc')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            expect(articles).toBeSortedBy('topic', { descending: false })
+        })
+    })
+    it('returns a 200 status code and returns an array of article objects sorted by votes in descending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=votes&order=desc')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            expect(articles).toBeSortedBy('votes', { descending: true })
+        })
+    })
+    it('returns a 200 status code and returns an array of article objects sorted by article id in descending order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=article_id&order=desc')
+        .expect(200)
+        .then((res) => {
+            const articles = res.body.articles
+            expect(articles).toBeSortedBy('article_id', { descending: true })
+        })
+    })
+    it('returns a 400 status code when an invalid sort column is given', () => {
+        return request(app)
+        .get('/api/articles?sort_by=invalid_column&order=desc')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Invalid sort column');
+        });
+    });
+    
+    it('returns a 400 status code when an invalid order value is given', () => {
+        return request(app)
+        .get('/api/articles?sort_by=votes&order=invalid_order')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('Invalid order value');
+        });
+    });
+    
+    
+})

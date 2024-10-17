@@ -22,8 +22,12 @@ exports.getEndpoints = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    selectArticles().then((articles) => {
+    const {sort_by} = req.query
+    const {order} = req.query
+    selectArticles(sort_by, order).then((articles) => {
         res.status(200).send({articles})
+    }).catch((err) => {
+        next(err)
     })
 }
 
@@ -41,9 +45,9 @@ exports.getArticleByID = (req, res, next) => {
 
 exports.getCommentsByArticleID = (req, res, next) => {
     const {article_id} = req.params
-    const promises = [selectArticleByID(article_id)]
+    const promise = selectArticleByID(article_id)
     
-    Promise.all(promises).then(() => {
+    promise.then(() => {
         selectCommentsByArticle(article_id).then((comments) => {
             res.status(200).send({comments})
         })
@@ -56,9 +60,9 @@ exports.getCommentsByArticleID = (req, res, next) => {
 
 exports.postCommentsByArticleID = (req, res, next) => {
     const {article_id} = req.params
-    const promises = [selectArticleByID(article_id)]
+    const promise = selectArticleByID(article_id)
     
-    Promise.all(promises).then(() => {
+    promise.then(() => {
         if (!req.body.hasOwnProperty('username') || !req.body.hasOwnProperty('body')){
             return Promise.reject({status: 400, msg: 'Bad Request'})
         }
@@ -78,10 +82,10 @@ exports.postCommentsByArticleID = (req, res, next) => {
 
 exports.patchVoteByArticleID = (req, res, next) => {
     const {article_id} = req.params
-    const promises = [selectArticleByID(article_id)]
+    const promise = selectArticleByID(article_id)
     
     
-    Promise.all(promises).then(() => {
+    promise.then(() => {
         if (!req.body.hasOwnProperty('inc_votes')){
             return Promise.reject({status: 400, msg: 'Bad Request'})
         }
@@ -100,10 +104,10 @@ exports.patchVoteByArticleID = (req, res, next) => {
 exports.deleteCommentByCommentId = (req, res, next) => {
     
     const {comment_id} = req.params
-    const promises = [selectCommentByCommentID(comment_id)]
+    const promise = selectCommentByCommentID(comment_id)
     
     
-    Promise.all(promises).then(() => {
+    promise.then(() => {
         removeCommentByCommentID(comment_id).then((comment) => {
                 res.status(204).send({})
         })
