@@ -90,6 +90,25 @@
     "description": "deletes the given comment by comment_id",
     "queries": [],
     "exampleResponse": {}
+  },
+  "GET /api/users": {
+    "description": "retrieves an array of all users with their details",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "john_doe",
+          "name": "John Doe",
+          "avatar_url": "https://example.com/avatar/john_doe.png"
+        },
+        {
+          "username": "jane_smith",
+          "name": "Jane Smith",
+          "avatar_url": "https://example.com/avatar/jane_smith.png"
+        }
+      ]
+    }
   }
+
   
 }
