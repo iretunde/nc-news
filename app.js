@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const {getTopics, getEndpoints, getArticleByID, getArticles, getCommentsByArticleID, postCommentsByArticleID, patchVoteByArticleID} = require("./controllers/controllers")
+const {getTopics, getEndpoints, getArticleByID, getArticles, getCommentsByArticleID, postCommentsByArticleID, patchVoteByArticleID, deleteCommentByCommentId} = require("./controllers/controllers")
 const { generalErrors } = require('./errors-controllers/errors-controllers')
 const articles = require('./db/data/test-data/articles')
 
@@ -18,6 +18,8 @@ app.patch('/api/articles/:article_id', patchVoteByArticleID)
 app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 app.post('/api/articles/:article_id/comments', postCommentsByArticleID)
+
+app.delete('/api/comments/:comment_id', deleteCommentByCommentId)
 
 
 app.all('*', (req, res, next) => {

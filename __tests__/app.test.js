@@ -321,7 +321,7 @@ describe('PATCH /api/articles/:article_id', () => {
         })
         
     })
-
+    
     it('returns a 400 status code when invalid inc_votes value passed', () => {
         return request(app)
         .patch("/api/articles/2")
@@ -335,4 +335,34 @@ describe('PATCH /api/articles/:article_id', () => {
     })
     
 })
+
+describe('DELETE /api/comments/:comment_id', () => {
+    it('returns a 204 status code after successfully deleting the comment', () => {
+        return request(app)
+        .delete("/api/comments/2")  
+        .expect(204)  
+        .then((res) => {
+            expect(res.body).toEqual({});  
+        });
+    });
+    it('returns a 400 status code for an invalid comment ID', () => {
+        return request(app)
+        .delete("/api/comments/invalid")  
+        .expect(400)  
+        .then((res) => {
+            expect(res.body).toEqual({ msg: "Bad Request" }); 
+        });
+    });
+
+    it('returns a 404 status code for a comment ID that does not exist', () => {
+        return request(app)
+        .delete("/api/comments/999")  
+        .expect(404)  
+        .then((res) => {
+            expect(res.body).toEqual({ msg: "Not Found" }); 
+        });
+    });
+});
+
+
 
