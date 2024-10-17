@@ -13,14 +13,15 @@ exports.selectTopics = () => {
 exports.selectEndpoints = () => {
     const filePath = path.resolve(__dirname, '../endpoints.json')
     return fs.readFile(filePath, 'utf-8')
-     .then((data) => {
+    .then((data) => {
         return data
         
     }).catch((err) => {
         return err
     })
-
+    
 }
+
 
 exports.selectArticles = (req, res, next) => {
     return db.query(`SELECT 
@@ -109,3 +110,10 @@ exports.insertCommentByArticleId = (id, username, body) => {
         
     }
     
+    exports.selectUsers = () => {
+        return db.query('SELECT * FROM users;').then(({rows}) => {
+            return rows
+        })
+
+
+    }

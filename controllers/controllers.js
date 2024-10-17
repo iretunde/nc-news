@@ -1,4 +1,4 @@
-const {selectTopics, selectEndpoints, selectArticleByID, selectArticles, selectCommentsByArticle, insertCommentByArticleId, insertVoteByArticleID, removeCommentByCommentID, selectCommentByCommentID} = require('../models/models')
+const {selectTopics, selectEndpoints, selectArticleByID, selectArticles, selectCommentsByArticle, insertCommentByArticleId, insertVoteByArticleID, removeCommentByCommentID, selectCommentByCommentID, selectUsers} = require('../models/models')
 const fs = require("fs/promises")
 
 
@@ -111,5 +111,12 @@ exports.deleteCommentByCommentId = (req, res, next) => {
     }).catch((err) => {
         next(err)
     }) 
+
+}
+
+exports.getUsers = (req, res, next) => {
+    selectUsers().then((users) => {
+        res.status(200).send({users})
+    })
 
 }

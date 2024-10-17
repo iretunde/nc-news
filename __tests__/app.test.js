@@ -10,7 +10,7 @@ beforeEach(() => seed(testData))
 afterAll(() => db.end())
 
 describe('GET /api/topics', () => {
-    it('returns a 200 status code and returns an array of topics', () => {
+    it('returns a 200 status code and returns an array of objects representing topics', () => {
         return request(app)
         .get('/api/topics')
         .expect(200)
@@ -58,7 +58,7 @@ describe('GET /api', () => {
             expect(endPoints).toHaveProperty('GET /api')
             expect(endPoints).toHaveProperty('GET /api/topics')
             expect(endPoints).toHaveProperty('GET /api/articles')
-
+            
         })
     })
 })
@@ -364,5 +364,22 @@ describe('DELETE /api/comments/:comment_id', () => {
     });
 });
 
+describe('GET /api/users', () => {
+    it('returns a 200 status code and returns an array of objects representing users', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then((res) => {
+            const users = res.body.users
+            expect(Array.isArray(users)).toBe(true); 
+            users.forEach((user) => {
+                expect(user).toHaveProperty('username', expect.any(String)); 
+                expect(user).toHaveProperty('name', expect.any(String));      
+                expect(user).toHaveProperty('avatar_url', expect.any(String)); 
+            });
 
+
+        })
+    })
+})
 
