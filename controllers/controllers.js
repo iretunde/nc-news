@@ -1,4 +1,4 @@
-const {selectTopics, selectEndpoints, selectArticleByID, selectArticles, selectCommentsByArticle, insertCommentByArticleId, insertVoteByArticleID} = require('../models/models')
+const {selectTopics, selectEndpoints, selectArticleByID, selectArticles, selectCommentsByArticle, insertCommentByArticleId, insertVoteByArticleID, removeCommentByCommentID, selectCommentByCommentID} = require('../models/models')
 const fs = require("fs/promises")
 
 
@@ -89,10 +89,27 @@ exports.patchVoteByArticleID = (req, res, next) => {
         const votes = req.body.inc_votes
         return insertVoteByArticleID(article_id, votes).then((article) => {
             res.status(200).send({article: article[0]})
-    
-    })
+            
+        })
     }).catch((err) => {
         next(err)
     }) 
     
+}
+
+exports.deleteCommentByCommentId = (req, res, next) => {
+    
+    const {comment_id} = req.params
+    const promises = [selectCommentByCommentID(comment_id)]
+    
+    
+    Promise.all(promises).then(() => {
+        removeCommentByCommentID(comment_id).then((comment) => {
+                res.status(204).send({})
+        })
+
+    }).catch((err) => {
+        next(err)
+    }) 
+
 }
