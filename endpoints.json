@@ -10,7 +10,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
+    "description": "serves an array of all articles optionally filtered by topic. If the topic query is omitted, the endpoint responds with all articles.",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [

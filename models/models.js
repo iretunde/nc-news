@@ -23,11 +23,14 @@ exports.selectEndpoints = () => {
 }
 
 
-exports.selectArticles = (sort_by = 'created_at', order = 'DESC') => {
+exports.selectArticles = (sort_by, order, topic) => {
     const new_sort_by = sort_by || 'created_at'
     const new_order = order || 'DESC'
+    const new_topic = topic || 'everything'
+
     const validSortByColumns = ['created_at', 'votes', 'title', 'author', 'topic', 'article_id']; 
     const validOrderValues = ['asc', 'desc'];
+    const validTopicValues = ['mitch', 'cats', 'paper']
 
     if (!validSortByColumns.includes(new_sort_by.toLowerCase())) {
         return Promise.reject({ status: 400, msg: 'Invalid sort column' });
@@ -36,7 +39,9 @@ exports.selectArticles = (sort_by = 'created_at', order = 'DESC') => {
         return Promise.reject({ status: 400, msg: 'Invalid order value' });
     }
 
-    return db.query(`SELECT 
+
+
+    let queryStr = `SELECT 
                         articles.author,
                         articles.title,
                         articles.article_id,
@@ -51,8 +56,26 @@ exports.selectArticles = (sort_by = 'created_at', order = 'DESC') => {
                         FROM comments 
                         GROUP BY article_id
                     ) AS comment_counts
-                    ON articles.article_id = comment_counts.article_id
-                    ORDER BY articles.${new_sort_by} ${new_order}`).then(({rows}) => {
+                    ON articles.article_id = comment_counts.article_id`
+
+    
+    
+    
+    
+    if (new_topic !== 'everything'){
+        if (!validTopicValues.includes(new_topic.toLowerCase())) {
+            return Promise.reject({ status: 400, msg: 'Invalid topic value' });
+        }
+
+        queryStr += ` WHERE articles.topic = '${new_topic}'`
+
+
+    }
+    queryStr += ` ORDER BY articles.${new_sort_by} ${new_order};`
+
+
+
+    return db.query(queryStr).then(({rows}) => {
         return rows
     })
 }
