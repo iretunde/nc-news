@@ -17,6 +17,7 @@ describe('GET /api/topics', () => {
         .then((res) => {
             const topics = res.body.topics
             expect(Array.isArray(topics)).toBe(true)
+            expect(topics).toHaveLength(3)
             topics.forEach((topic) => {
                 expect(topic).toHaveProperty('slug')
                 expect(topic).toHaveProperty('description')
@@ -70,7 +71,7 @@ describe('GET /api/articles/:article_id', () => {
         .expect(200)
         .then((res) => {
             const article = res.body.article[0]
-            expect(Object.keys(article)).toHaveLength(8)
+            expect(Object.keys(article)).toHaveLength(9)
             
             expect(article).toHaveProperty('author', expect.any(String));
             expect(article).toHaveProperty('title', expect.any(String));
@@ -80,6 +81,7 @@ describe('GET /api/articles/:article_id', () => {
             expect(article).toHaveProperty('created_at', expect.any(String)); 
             expect(article).toHaveProperty('votes', expect.any(Number));
             expect(article).toHaveProperty('article_img_url', expect.any(String)); 
+            expect(article).toHaveProperty('comment_count', expect.any(Number)); 
             
         })
     })
@@ -108,6 +110,7 @@ describe('GET /api/articles', () => {
         .expect(200)
         .then((res) => {
             const articles = res.body.articles
+            expect(articles).toHaveLength(13)
             expect(articles).toBeSortedBy('created_at', { descending: true })
             articles.forEach((article) => {
                 expect(article).toHaveProperty('author');
@@ -140,6 +143,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .expect(200)
         .then((res) => {
             const comments = res.body.comments
+            expect(comments).toHaveLength(11)
             comments.forEach((comment) => {
                 expect(comment).toHaveProperty('comment_id', expect.any(Number));
                 expect(comment).toHaveProperty('votes', expect.any(Number));
@@ -229,7 +233,7 @@ describe('POST /api/articles/:article_id/comments', () => {
     }) 
     it('returns a 400 status code when "username" is missing in send body', () => {
         return request(app)
-        .post('/api/articles/invalid/comments')
+        .post('/api/articles/3/comments')
         .send({body: "I haven't actually read the article but I am commenting anyway."
         })
         .expect(400)
@@ -380,6 +384,7 @@ describe('GET /api/users', () => {
         .expect(200)
         .then((res) => {
             const users = res.body.users
+            expect(users).toHaveLength(4)
             expect(Array.isArray(users)).toBe(true); 
             users.forEach((user) => {
                 expect(user).toHaveProperty('username', expect.any(String)); 
@@ -466,12 +471,12 @@ describe('GET /api/articles?topic=:topic_value', () => {
         .get('/api/articles?topic=mitch')
         .expect(200)
         .then((res) => {
-            const articles = res.body.articles
-            
+            const articles = res.body.articles 
+            expect(articles).toHaveLength(12)        
             articles.forEach((article) => {
-                 expect(article).toHaveProperty('topic', 'mitch')
-             })
-
+                expect(article).toHaveProperty('topic', 'mitch')
+            })
+            
         })
     })
     it('returns a 200 status code and returns an array of article objects of a particular topic (cats)', () => {
@@ -480,11 +485,11 @@ describe('GET /api/articles?topic=:topic_value', () => {
         .expect(200)
         .then((res) => {
             const articles = res.body.articles
-            
+            expect(articles).toHaveLength(1)        
             articles.forEach((article) => {
-                 expect(article).toHaveProperty('topic', 'cats')
-             })
-
+                expect(article).toHaveProperty('topic', 'cats')
+            })
+            
         })
     })
     it('returns a 200 status code and returns an array of article objects of a particular topic (paper)', () => {
@@ -492,8 +497,8 @@ describe('GET /api/articles?topic=:topic_value', () => {
         .get('/api/articles?topic=paper')
         .expect(200)
         .then((res) => {
-            const articles = res.body.articles
-            
+            const articles = res.body.articles 
+            expect(articles).toHaveLength(0)        
             articles.forEach((article) => {
                  expect(article).toHaveProperty('topic', 'paper')
              })
